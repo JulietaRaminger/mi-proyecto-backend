@@ -10,7 +10,7 @@
         "lint": "eslint ./src --fix"
     },
     "node-engines": {
-        "node": "16.14.0"
+        "node": ">=16.x"
     },
     "repository": {
         "url": "https://github.com/JulietaRaminger/mi-proyecto-backend.git"

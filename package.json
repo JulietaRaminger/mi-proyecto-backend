@@ -1,7 +1,7 @@
 {
     "name": "proyecto-backend---raminger-julieta",
     "version": "1.0.0",
-    "main": "src/server.js",
+    "main": "./src/server.js",
     "type": "module",
     "scripts": {
         "start": "node ./src/server.js",
@@ -10,7 +10,7 @@
         "lint": "eslint ./src --fix"
     },
     "node-engines": {
-        "node": "16.x"
+        "node": "16.14.0"
     },
     "repository": {
         "url": "https://github.com/JulietaRaminger/mi-proyecto-backend.git"

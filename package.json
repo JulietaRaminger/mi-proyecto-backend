@@ -9,7 +9,7 @@
         "stop-windows": "taskkill /F /IM node.exe",
         "lint": "eslint ./src --fix"
     },
-    "node-engines": {
+    "engines": {
         "node": ">=16.x"
     },
     "repository": {

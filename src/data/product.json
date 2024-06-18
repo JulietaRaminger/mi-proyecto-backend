@@ -76,5 +76,18 @@
 		"code": "P006",
 		"stock": 39,
 		"available": true
+	},
+	{
+		"id": 8,
+		"category": "1",
+		"title": "Conjunto Lino",
+		"description": "Conjunto para bebe de lino, talle unico super delicado y fresco.",
+		"price": 4000,
+		"thumbnail": [
+			"https://i.ibb.co/3pHyytR/conjunto-lino1.jpg"
+		],
+		"code": "P007",
+		"stock": 10,
+		"available": true
 	}
 ]

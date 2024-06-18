@@ -88,22 +88,20 @@
     /* Centrar verticalmente el contenido */
 }
 
-.thumbnail a {
-    display: block;
-    width: 80px;
-    /* Reducir el ancho */
-    height: 80px;
-    /* Reducir la altura */
-    overflow: hidden;
-    margin: 0 auto;
-    /* Centrar la imagen */
+.title {
+    width: 30%;
+    margin: 0px auto;
 }
 
-.thumbnail a img {
+.thumbnail a {
+    display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
+    height: 50px;
+    /* Reducir la altura */
+    overflow: hidden;
+    margin: 0px auto;
+    /* Centrar la imagen */
+    padding: 5px 0;
 }
 
 .available svg {
@@ -112,6 +110,7 @@
     height: 20px;
     /* Reducir el tamaño del icono */
     vertical-align: middle;
+    cursor: pointer;
 }
 
 .edit,

@@ -4,4 +4,5 @@ node_modules/
 # Ignorar el archivo de configuración de ESLint
 .eslintrc.cjs
 
-
+# Ignorar el archivo txt
+.credenciales_mongodb_cloud.txt

@@ -6,6 +6,7 @@ import viewsRouter from "./router/views.routes.js";
 import pathConfig from "./utils/path.js";
 import handlebars from "./config/handlebars.config.js";
 import serverSocket from "./config/socket.config.js";
+import mongoDB from "./config/mongoose.config.js";
 
 const port = 8080;
 const host = "localhost"; // 127.0.0.1
@@ -44,6 +45,7 @@ server.use((error, req, res) => {
 // método oyente de solicitudes
 const serverHttp = server.listen(port, () => {
     console.log(`Ejecutándose en http://${host}:${port}`);
+    mongoDB.connectDB();
 });
 
 // así enviamos el serverHttp al socket.config.js

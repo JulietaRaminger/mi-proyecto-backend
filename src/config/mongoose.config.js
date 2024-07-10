@@ -1,6 +1,6 @@
-import { connect } from "mongoose";
+import { connect, Types } from "mongoose";
 
-const connectDB = () => {
+const connectDB = async () => {
     const URI = "mongodb+srv://julietaraminger:iwCjUKDOtVPzIMg2@cluster0.uwq4ups.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
     const options = {
@@ -9,12 +9,16 @@ const connectDB = () => {
         dbName: "commerce", // Nombre de la base de datos.
     };
 
-    connect(URI, options)
-        .then(() => console.log("Conectado a MongoDB"))
-        .catch((err) => console.error("Error al conectar con MongoDB", err));
-
+    try {
+        await connect(URI, options);
+        console.log("Conectado a la base de datos");
+    } catch (error) {
+        console.error("Error al conectar a la base de datos", error);
+    }
 };
 
-export default {
-    connectDB,
+const isValidId = (id) => {
+    return Types.ObjectId.isValid(id); // esto devuelve true o false.
 };
+
+export default { connectDB, isValidId };

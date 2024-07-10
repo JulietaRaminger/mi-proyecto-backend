@@ -1,127 +1,143 @@
-import fs from "fs";
-import path from "path";
+import ProductModel from "../models/product.model.js";
+import mongoDB from "../config/mongoose.config.js";
 
 export default class productController {
+    #itemModel;
+
     // Constructor
     constructor() {
-        this.path = path.join("./src/data/product.json");
+        this.#itemModel = ProductModel;
     }
 
     // Funciones privadas
-    #generarId = (products) => {
-        let idMayor = 0;
-        products.forEach((product) => {
-            if (product.id > idMayor) {
-                idMayor = product.id;
-            }
-        });
-        return idMayor + 1;
-    };
-
-    #readProductos = async () => {
-        await this.#ensureFileExists();
-        const respuesta = await fs.promises.readFile(this.path, "utf8");
-        return JSON.parse(respuesta);
+    #readItems = async (limit, skip, sort) => {
+        try {
+            const items = await this.#itemModel.find().limit(limit).skip(skip).sort(sort).lean();
+            return items;
+        } catch (error) {
+            console.log(error.message);
+        }
     };
 
     #escribirArchivo = async (datos) => {
-        return await fs.promises.writeFile(this.path, JSON.stringify(datos, null, "\t")); // Escribir los productos combinados en el archivo
-    };
-
-    #validateCode = (products, code) => {
-        const validate = products.find((product) => product.code === code);
-        if (validate) {
-            console.log("El código ya existe");
+        try {
+            return await datos.save();
+        } catch (error) {
+            console.log(error.message);
         }
-        return !validate;
     };
 
     #identifyId = async (id) => {
-        const respuesta = await this.#readProductos();
-        const productId = respuesta.find((product) => product.id === id);
-        return productId;
-    };
-
-    #ensureFileExists = async () => {
         try {
-            await fs.promises.access(this.path, fs.constants.F_OK);
+            const itemId = await this.#itemModel.findById(id);
+            return itemId;
         } catch (error) {
-            await this.#escribirArchivo([]);
+            console.log(error.message);
         }
     };
 
     // Funciones públicas
+    countProducts = async () => {
+        try {
+            return await ProductModel.countDocuments();
+        } catch (error) {
+            console.log(error.message);
+            return "Hubo un error al contar los productos";
+        }
+    };
+
     addProduct = async ({ category, title, description, price, thumbnail = [], code, stock, available }) => {
-        await this.#ensureFileExists();
-        const products = await this.#readProductos();
-        const product = {
-            id: this.#generarId(products),
-            category,
-            title,
-            description,
-            price,
-            thumbnail,
-            code,
-            stock,
-            available: available !== undefined ? available : true,
-        };
+
         if (!category || !title || !description || !price || !code || !stock) {
             console.log("Todos los campos son obligatorios");
-        } else {
-            if (this.#validateCode(products, code)) {
-                const productoAgregado = [ ...products, product ];
-                await this.#escribirArchivo(productoAgregado);
-                return "Producto Agregado";
+        }
+        const products = await this.#readItems();
+        try {
+            const product = new this.#itemModel({
+                category,
+                title,
+                description,
+                price,
+                thumbnail,
+                code,
+                stock,
+                available: available !== undefined ? available : true,
+            });
+            const sameCode = products.find((product) => product.code === code);
+            if (sameCode){
+                return "El codigo ya existe";
             }
+            await this.#escribirArchivo(product);
+            return "Producto agregado correctamente";
+        } catch (error) {
+            console.log(error.message);
+            return "Hubo un error al agregar el producto";
         }
     };
 
     getProductById = async (id) => {
-        await this.#ensureFileExists();
-        const respuesta = await this.#identifyId(id);
-        if (!respuesta) {
-            return "Not Found";
-        } else {
-            return respuesta;
+        if (!mongoDB.isValidId(id)) {
+            return null;
+        }
+        try {
+            const product = await this.#identifyId(id);
+            return product;
+        } catch (error) {
+            console.log(error.message);
         }
     };
 
     deleteProductById = async (id) => {
-        await this.#ensureFileExists();
-        let products = await this.#readProductos();
-        products = products.filter((product) => product.id !== id);
-        await this.#escribirArchivo(products);
-        return "Producto Eliminado";
+        if (!mongoDB.isValidId(id)) {
+            return null;
+        }
+        try {
+            await this.#itemModel.findByIdAndDelete(id);
+            return "Producto Eliminado";
+        } catch (error) {
+            console.log(error, message);
+        }
     };
 
-    updateProduct = async ({ id, ...product }) => {
-        await this.#ensureFileExists();
-        const existingProduct = await this.#identifyId(id);
-        if (existingProduct) {
-            let products = await this.#readProductos();
-            products = products.map((p) => (p.id === id ? { id, ...product } : p));
-            await this.#escribirArchivo(products);
-            return "Producto Modificado";
-        } else {
-            return "Producto no encontrado";
+    updateProduct = async ( id, updateData ) => {
+        if (!mongoDB.isValidId(id)) {
+            return null;
+        }
+        try {
+            const updatedProduct = await this.#itemModel.findByIdAndUpdate(id, updateData, { new: true });
+            if (updatedProduct) {
+                return "Producto Modificado";
+            } else {
+                return "Producto no encontrado";
+            }
+        } catch (error) {
+            console.log(error.message);
         }
     };
 
     toggleAvailability = async (id) => {
-        await this.#ensureFileExists();
-        const products = await this.#readProductos();
-        const index = products.findIndex((product) => product.id === id);
-        if (index === -1) {
-            return "Producto no encontrado";
+        if (!mongoDB.isValidId(id)) {
+            return null;
         }
-        products[index].available = !products[index].available;
-        await this.#escribirArchivo(products);
-        return products[index];
+        try {
+            const product = await this.#identifyId(id);
+            if (product) {
+                product.available = !product.available;
+                await this.#escribirArchivo(product);
+                return product;
+            } else {
+                return "Producto no encontrado";
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
     };
 
-    getProducts = async () => {
-        await this.#ensureFileExists();
-        const products = await this.#readProductos();
-        return products;
+    getProducts = async (limit, skip, sort) => {
+        try {
+            return await this.#readItems(limit, skip, sort);
+        } catch (error) {
+            console.log(error.message);
+        }
     };
 }

@@ -37,12 +37,9 @@ socket.on("products", (products) => {
         `;
     });
     tbody.innerHTML = rowsHTML; // Establecer el innerHTML de tbody una sola vez
-
     // Agregar event listener para los botones de eliminar
     document.querySelectorAll(".delete").forEach((button) => {
-        button.addEventListener("click", function(event) {
-            event.preventDefault(); // Prevenir el comportamiento predeterminado del enlace
-
+        button.addEventListener("click", function() {
             const productId = this.getAttribute("id");
 
             // Mostrar SweetAlert para confirmar la eliminación
@@ -100,9 +97,9 @@ form.addEventListener("submit", function(event) {
         thumbnail: [file],
         available: true,
     };
+    console.log(file);
     socket.emit("add-product", product);
     form.reset();
-
     // Mostrar SweetAlert después de enviar el producto
     Swal.fire({
         position: "top-end",

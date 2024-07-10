@@ -89,5 +89,18 @@
 		"code": "P007",
 		"stock": 10,
 		"available": true
+	},
+	{
+		"id": 9,
+		"category": "1",
+		"title": "Coronas",
+		"description": "Coronas para niñas, de tela con un bordado super delicado",
+		"price": 1500,
+		"thumbnail": [
+			"C:\\fakepath\\corona1.jpeg"
+		],
+		"code": "P008",
+		"stock": 100,
+		"available": true
 	}
 ]

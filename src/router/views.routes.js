@@ -20,7 +20,6 @@ router.get("/", async (req, res) => {
     }
 });
 
-/*
 router.get("/explain", async (req, res) => {
     try {
         const result = await ProductModel.find({ $and: [{ category: "BATERIA" }, { title: "55457" }] }).explain();
@@ -31,7 +30,7 @@ router.get("/explain", async (req, res) => {
         res.status(500).send(`<h1>Error 500</h1><h3>${ERROR_SERVER}</h3>`);
     }
 });
-*/
+
 router.get("/realtimeproducts", async (req, res) => {
     try {
         return res.status(200).render("realTimeProducts", { title: "realTimeProducts" });

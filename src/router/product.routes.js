@@ -1,7 +1,5 @@
 import { Router } from "express";
 import productController from "../controllers/productController.js";
-import uploader from "../utils/uploader.js";
-/*import productModel from "../models/product.model.js";*/
 
 import {
     ERROR_INVALID_ID,
@@ -17,8 +15,8 @@ const errorHandler = (res, message) => {
 const router = Router();
 const product = new productController();
 
-router.post("/", uploader.single("file"), async (req, res) => {
-    try{
+router.post("/", async (req, res) => {
+    try {
         const { category, title, description, price, thumbnail, code, stock } = req.body;
         const product = await product.addProduct({ category, title, description, price, thumbnail, code, stock });
         res.status(201).json({ status: true, payload: product });
@@ -29,8 +27,8 @@ router.post("/", uploader.single("file"), async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-    try{
-        const { limit, page, sort } = req.query;
+    try {
+        const { limit, page, sort, filter } = req.query;
         const limitNumber = limit ? Number(limit) : 10;
         const pageNumber = page ? Number(page) : 1;
         const skip = (pageNumber - 1) * limitNumber;
@@ -43,10 +41,19 @@ router.get("/", async (req, res) => {
             sortOptions[field] = order === "1" ? 1 : -1;
         }
 
-        const products = await product.getProducts(limitNumber, skip, sortOptions);
+        const filters = {};
+        if (filter) {
+            const filterPairs = filter.split(",");
+            filterPairs.forEach((pair) => {
+                const [ key, value ] = pair.split(":");
+                filters[key] = value;
+            });
+        }
+
+        const products = await product.getProducts(limitNumber, skip, sortOptions, filters);
 
         const result = {
-            status: "success",
+            status: true,
             payload: products,
             totalPages: totalPages,
             prevPage: pageNumber > 1 ? pageNumber - 1 : null,
@@ -54,11 +61,11 @@ router.get("/", async (req, res) => {
             page: pageNumber,
             hasNextPage: pageNumber < totalPages,
             hasPrevPage: pageNumber > 1,
-            prevLink: pageNumber > 1 ? `/api/products?limit=${limitNumber}&page=${pageNumber - 1}` : null,
-            nextLink: pageNumber < totalPages ? `/api/products?limit=${limitNumber}&page=${pageNumber + 1}` : null,
+            prevLink: pageNumber > 1 ? `/api/products?limit=${limitNumber}&page=${pageNumber - 1}&sort=${sort}&filter=${filter}` : null,
+            nextLink: pageNumber < totalPages ? `/api/products?limit=${limitNumber}&page=${pageNumber + 1}&sort=${sort}&filter=${filter}` : null,
         };
 
-        return res.status(200).json({ status: true, result: result });
+        return res.status(200).json({ result: result });
     } catch (error) {
         console.error(error.message);
         errorHandler(res, error.message);
@@ -66,9 +73,9 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-    try{
-        const id = (req.params.id);
-        const product = await product.getProductById(id);
+    try {
+        const ID = (req.params.id);
+        const product = await product.getProductById(ID);
         res.status(200).json({ status: true, payload: product });
     } catch (error) {
         console.error(error.message);
@@ -77,9 +84,9 @@ router.get("/:id", async (req, res) => {
 });
 
 router.delete("/:id", async (req, res) => {
-    try{
-        const id = (req.params.id);
-        const product = await product.deleteProductById(id);
+    try {
+        const ID = (req.params.id);
+        const product = await product.deleteProductById(ID);
         res.status(200).json({ status: true, payload: product });
     }catch (error) {
         console.error(error.message);
@@ -87,12 +94,12 @@ router.delete("/:id", async (req, res) => {
     }
 });
 
-router.put("/:id", uploader.single("file"), async (req, res) => {
-    try{
-        const id = req.params.id;
+router.put("/:id", async (req, res) => {
+    try {
+        const ID = req.params.id;
         const { category, title, description, price, thumbnail, code, stock, available } = req.body;
         const updateData = { category, title, description, price, thumbnail, code, stock, available };
-        const productUpdated = await product.updateProduct( id, updateData );
+        const productUpdated = await product.updateProduct( ID, updateData );
         if (!productUpdated) {
             return res.status(404).json({ status: false, message: "Producto no encontrado" });
         }
@@ -101,17 +108,18 @@ router.put("/:id", uploader.single("file"), async (req, res) => {
         console.error(error.message);
         errorHandler(res, error.message);
     }
-
 });
 
-router.put("/available/:id", uploader.single("file"), async (req, res) => {
-    try{
-        const id = req.params.id;
-        const result = await product.toggleAvailability(id);
-        if (result === "Producto no encontrado") {
-            return res.status(404).json({ status: false, message: result });
+router.put("/available/:id", async (req, res) => {
+    try {
+        const ID = req.params.id;
+        const RESULT = await product.toggleAvailability(ID);
+
+        if (RESULT === "Producto no encontrado") {
+            return res.status(404).json({ status: false, message: RESULT });
         }
-        return res.status(200).json({ status: true, payload: result });
+
+        return res.status(200).json({ status: true, payload: RESULT });
     } catch (error) {
         console.error(error.message);
         errorHandler(res, error.message);

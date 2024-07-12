@@ -4,7 +4,7 @@ import productController from "./productController.js";
 
 const PRODUCT = new productController();
 
-export default class CartManager {
+export default class cartController {
     #itemModel;
 
     // Constructor

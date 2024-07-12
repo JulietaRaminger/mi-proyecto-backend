@@ -1,12 +1,13 @@
 /* Servidor Express */
 import express from "express";
+import mongoDB from "./config/mongoose.config.js";
 import productRouter from "./router/product.routes.js";
 import cartRouter from "./router/cart.routes.js";
 import viewsRouter from "./router/views.routes.js";
 import pathConfig from "./utils/path.js";
 import handlebars from "./config/handlebars.config.js";
 import serverSocket from "./config/socket.config.js";
-import mongoDB from "./config/mongoose.config.js";
+
 import { ERROR_SERVER, ERROR_NOT_FOUND_URL } from "./constants/messages.constant.js";
 
 const port = 8080;
@@ -29,6 +30,7 @@ server.use("/realtimeproducts", express.static(pathConfig.images));
 
 // declaración de enrutadores
 server.use("/", viewsRouter);
+server.use("/explain", viewsRouter);
 server.use("/realtimeproducts", viewsRouter);
 server.use("/api/products", productRouter);
 server.use("/api/carts", cartRouter);

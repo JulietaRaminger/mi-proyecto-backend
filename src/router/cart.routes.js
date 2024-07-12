@@ -1,6 +1,5 @@
 import { Router } from "express";
 import cartController from "../controllers/cartController.js";
-import uploader from "../utils/uploader.js";
 
 import {
     ERROR_INVALID_ID,
@@ -17,16 +16,16 @@ const router = Router();
 const cart = new cartController();
 
 // cart manager
-router.post("/", uploader.single("file"), async (req, res) => {
-    try{
+router.post("/", async (req, res) => {
+    try {
         res.status(201).send(await cart.addCart());
     } catch (error) {
         errorHandler(res, error.message);
     }
 });
 
-router.post("/:cid/products/:pid", uploader.single("file"), async (req, res) => {
-    try{
+router.post("/:cid/products/:pid", async (req, res) => {
+    try {
         const cartId = req.params.cid;
         const productId = req.params.pid;
         res.status(200).send(await cart.addProductToCart(cartId, productId));
@@ -36,7 +35,7 @@ router.post("/:cid/products/:pid", uploader.single("file"), async (req, res) => 
 });
 
 router.get("/", async (req, res) => {
-    try{
+    try {
         res.status(200).send(await cart.getCarts());
     }catch (error) {
         errorHandler(res, error.message);
@@ -44,9 +43,9 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-    try{
-        const id = Number(req.params.id);
-        res.status(200).send(await cart.getCartById(id));
+    try {
+        const ID = req.params.id;
+        res.status(200).send(await cart.getCartById(ID));
     }catch (error) {
         errorHandler(res, error.message);
     }
@@ -111,10 +110,10 @@ router.delete("/:cid", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
     try {
-        const id = req.params.id;
+        const ID = req.params.id;
         const { products } = req.body; // Ahora se espera que el cuerpo de la solicitud contenga un arreglo de productos
         const updateData = { products };
-        const cartUpdated = await cart.updateCart(id, updateData);
+        const cartUpdated = await cart.updateCart(ID, updateData);
         if (!cartUpdated) {
             return res.status(404).json({ status: false, message: "Producto no encontrado" });
         }

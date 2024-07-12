@@ -1,6 +1,6 @@
 import { Router } from "express";
 import productController from "../controllers/productController.js";
-import uploader from "../utils/uploader.js";
+import ProductModel from "../models/product.model.js";
 
 import { ERROR_SERVER } from "../constants/messages.constant.js";
 
@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
     try {
         const allProducts = await product.getProducts();
         return res.status(200).render("home", {
-            title: "products",
+            title: "Products",
             products: allProducts,
         });
     } catch (error) {
@@ -20,24 +20,21 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.get("/realtimeproducts", async (req, res) => {
-    return res.status(200).render("realTimeProducts", { title: "realtimeproducts" });
-});
-
-router.post("/realtimeproducts", uploader.single("file"), async (req, res) => {
-    const { file } = req;
-
-    if (!file) {
-        res.status(400).send({ state: "error", message: "file is required" });
-        return;
-    }
-
-    const filename = file.filename;
-    const { category, title, description, price, code, stock } = req.body;
-
+/*
+router.get("/explain", async (req, res) => {
     try {
-        await product.addProduct(category, title, description, price, filename, code, stock);
-        return res.redirect("http://localhost:8080/realtimeproducts");
+        const result = await ProductModel.find({ $and: [{ category: "BATERIA" }, { title: "55457" }] }).explain();
+        console.log(result.executionStats);
+        res.status(200).json({ status: true, payload: result.executionStats });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send(`<h1>Error 500</h1><h3>${ERROR_SERVER}</h3>`);
+    }
+});
+*/
+router.get("/realtimeproducts", async (req, res) => {
+    try {
+        return res.status(200).render("realTimeProducts", { title: "realTimeProducts" });
     } catch (error) {
         console.log(error.message);
         res.status(500).send(`<h1>Error 500</h1><h3>${ERROR_SERVER}</h3>`);

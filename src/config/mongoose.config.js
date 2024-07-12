@@ -1,12 +1,12 @@
 import { connect, Types } from "mongoose";
 
 const connectDB = async () => {
-    const URI = "mongodb+srv://julietaraminger:iwCjUKDOtVPzIMg2@cluster0.uwq4ups.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+    const URI = "mongodb+srv://julietaraminger:PFucmdOvKhfCPHFD@cluster0.uwq4ups.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
     const options = {
         useNewUrlParser: true, // Utiliza el nuevo motor de análisis de URL de MongoDB.
         useUnifiedTopology: true, // Deshabilitar los métodos obsoletos.
-        dbName: "commerce", // Nombre de la base de datos.
+        dbName: "denadiseno", // Nombre de la base de datos.
     };
 
     try {

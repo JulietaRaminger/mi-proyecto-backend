@@ -1,4 +1,4 @@
-/* Estilos para la sección de administración */
+/* Estilos para realTineProduct */
 .container {
     width: 80%;
     margin: 20px auto;
@@ -59,7 +59,7 @@
     background-color: #0056b3;
 }
 
-/* Estilos para la tabla de productos cargados */
+/* Estilos de realTimeProduct pero la parte de los productos ya cargados*/
 
 .contenedor__table {
     width: 100%;
@@ -128,79 +128,7 @@
 }
 
 
-/*Home.handlebars*/
-
-.productos__tabla {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.titulo {
-    text-align: center;
-    font-size: 2rem;
-    margin-bottom: 20px;
-}
-
-.tabla__categorias {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-.categoria__item {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.item__foto {
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-.thumbnail {
-    width: 100%;
-    max-width: 250px;
-    overflow: hidden;
-}
-
-.thumbnail img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-    transition: transform 0.3s ease;
-}
-
-.thumbnail img:hover {
-    transform: scale(1.05);
-}
-
-.item__texto {
-    flex: 1;
-}
-
-.titulo-producto {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-}
-
-.precio {
-    font-weight: bold;
-    color: #007BFF;
-    margin-bottom: 10px;
-}
-
-.descripcion {
-    color: #666;
-    line-height: 1.5;
-}
-
-
+/*Estilos para Product.handlebars*/
 
 
 

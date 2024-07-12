@@ -1,20 +1,9 @@
-<section class="productos__tabla">
-    <h1 class="titulo">Productos</h1>
-    <div class="tabla__categorias">
-        {{#each products}}
-        {{#if this.available}}
-        <article class="categoria__item">
-            <div class="item__foto">
-                <div><a href={{this.thumbnail.[0]}} target="_blank"><img class="thumbnail" src={{this.thumbnail.[0]}}
-                            alt={{this.thumbnail.[0]}}></a></div>
-            </div>
-            <div class="item__texto">
-                <h2 class="titulo-producto">{{this.title}}</h2>
-                <div class="precio">Precio: {{this.price}}</div>
-                <div class="descripcion">{{this.description}}</div>
-            </div>
-        </article>
-        {{/if}}
-        {{/each}}
+<section class="products__table">
+    <h1 class="titulo">Home</h1>
+    <div class="home__categories">
+        <a href="http://localhost:8080/realtimeproducts/" target="_blank"><button>RTP</button></a>
+        <a href="http://localhost:8080/products/" target="_blank"><button>Products</button></a>
+        <a href="http://localhost:8080/carts/" target="_blank"><button>Carts</button></a>
+        <a href="http://localhost:8080/explain" target="_blank"><button>Explain</button></a>
     </div>
 </section>

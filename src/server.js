@@ -1,8 +1,10 @@
 /* Servidor Express */
 import express from "express";
 import mongoDB from "./config/mongoose.config.js";
-import productRouter from "./router/product.routes.js";
-import cartRouter from "./router/cart.routes.js";
+import productRouter from "./router/api.product.routes.js";
+import viewsProductRouter from "./router/app.product.routes.js";
+import cartRouter from "./router/api.cart.routes.js";
+import viewsCartRouter from "./router/app.cart.routes.js";
 import viewsRouter from "./router/views.routes.js";
 import pathConfig from "./utils/path.js";
 import handlebars from "./config/handlebars.config.js";
@@ -24,14 +26,17 @@ handlebars.config(server);
 server.use("/", express.static(pathConfig.css));
 server.use("/", express.static(pathConfig.js));
 server.use("/", express.static(pathConfig.images));
+server.use("/products", express.static(pathConfig.css));
+server.use("/products", express.static(pathConfig.images));
+server.use("/carts", express.static(pathConfig.css));
 server.use("/realtimeproducts", express.static(pathConfig.js));
 server.use("/realtimeproducts", express.static(pathConfig.css));
 server.use("/realtimeproducts", express.static(pathConfig.images));
 
-// declaración de enrutadores
+// Declaración de enrutadores
 server.use("/", viewsRouter);
-server.use("/explain", viewsRouter);
-server.use("/realtimeproducts", viewsRouter);
+server.use("/carts", viewsCartRouter);
+server.use("/products", viewsProductRouter);
 server.use("/api/products", productRouter);
 server.use("/api/carts", cartRouter);
 

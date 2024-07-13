@@ -1,12 +1,12 @@
 import { Router } from "express";
-import productController from "../controllers/productController.js";
+import ProductManager from "../controllers/ProductManager.js";
 
-const router = Router();
-const product = new productController();
+const ROUTER = Router();
+const PRODUCT = new ProductManager();
 
-router.get("/", async (req, res) => {
+ROUTER.get("/", async (req, res) => {
     try {
-        const allProducts = await product.getProducts();
+        const allProducts = await PRODUCT.getProducts();
         return res.status(200).render("products", {
             title: "Products",
             products: allProducts,
@@ -17,4 +17,4 @@ router.get("/", async (req, res) => {
     }
 });
 
-export default router;
+export default ROUTER;

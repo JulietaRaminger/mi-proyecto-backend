@@ -6,32 +6,30 @@ import viewsProductRouter from "./router/app.product.routes.js";
 import cartRouter from "./router/api.cart.routes.js";
 import viewsCartRouter from "./router/app.cart.routes.js";
 import viewsRouter from "./router/views.routes.js";
-import pathConfig from "./utils/path.js";
+import PATH from "./utils/path.js";
 import handlebars from "./config/handlebars.config.js";
 import serverSocket from "./config/socket.config.js";
 
-import { ERROR_SERVER, ERROR_NOT_FOUND_URL } from "./constants/messages.constant.js";
-
-const port = 8080;
-const host = "localhost"; // 127.0.0.1
+const PORT = 8080;
+const HOST = "localhost"; // 127.0.0.1
 const server = express();
 
 server.use(express.urlencoded({ extended: true })); // para recibir los datos en urlencoded desde postman
 server.use(express.json());
 
-// configuración del motor de plantillas
-handlebars.config(server);
+// configuracion del motor de plantillas
+handlebars.CONFIG(server);
 
-// declaración de ruta estática
-server.use("/", express.static(pathConfig.css));
-server.use("/", express.static(pathConfig.js));
-server.use("/", express.static(pathConfig.images));
-server.use("/products", express.static(pathConfig.css));
-server.use("/products", express.static(pathConfig.images));
-server.use("/carts", express.static(pathConfig.css));
-server.use("/realtimeproducts", express.static(pathConfig.js));
-server.use("/realtimeproducts", express.static(pathConfig.css));
-server.use("/realtimeproducts", express.static(pathConfig.images));
+// declaracion de ruta estatica
+server.use("/", express.static(PATH.css));
+server.use("/", express.static(PATH.js));
+server.use("/", express.static(PATH.images));
+server.use("/products", express.static(PATH.css));
+server.use("/products", express.static(PATH.images));
+server.use("/carts", express.static(PATH.css));
+server.use("/realTimeProducts", express.static(PATH.js));
+server.use("/realTimeProducts", express.static(PATH.css));
+server.use("/realTimeProducts", express.static(PATH.images));
 
 // Declaración de enrutadores
 server.use("/", viewsRouter);
@@ -40,22 +38,22 @@ server.use("/products", viewsProductRouter);
 server.use("/api/products", productRouter);
 server.use("/api/carts", cartRouter);
 
-// Control de rutas inexistentes
+// Metodo que gestiona las rutas inexistentes.
 server.use("*", (req, res) => {
-    res.status(500).send(`<h1>Error 404</h1><h3>${ERROR_NOT_FOUND_URL.message}</h3>`);
+    return res.status(404).send("<h1>Error 404: Not Found</h1>");
 });
 
-// Control de errores internos
+// control de errores internos
 server.use((error, req, res) => {
     console.log("Error:", error.message);
-    res.status(500).send(`<h1>Error 500</h1><h3>${ERROR_SERVER.message}</h3>`);
+    res.status(500).send("<h1>Error 500: Error en el Servidor</h1>");
 });
 
-// método oyente de solicitudes
-const serverHttp = server.listen(port, () => {
-    console.log(`Ejecutándose en http://${host}:${port}`);
+// metodo oyente de solicitudes
+const serverHTTP = server.listen(PORT, () => {
+    console.log(`Ejecutandose en http://${HOST}:${PORT}`);
     mongoDB.connectDB();
 });
 
-// así enviamos el serverHttp al socket.config.js
-serverSocket.config(serverHttp);
+// asi enviamos el serverHttp al socket.config.js.
+serverSocket.CONFIG(serverHTTP);

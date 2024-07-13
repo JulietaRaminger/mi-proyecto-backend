@@ -1,14 +1,19 @@
-<div class="container">
-    <h1 class="titulo titulo-principal">ADMINISTRACION</h1>
+<div class="contenedor">
+    <h1 class="titulo titulo-principal">Administración</h1>
     <form action="/realtimeproducts" method="POST" enctype="multipart/form-data" class="ingresoProductos" id="form">
         <div class="ingresoProductos__contenedor">
-            <input type="text" name="code" id="code" placeholder="Codigo" required />
-            <input type="text" name="category" id="category" placeholder="Categoria" required />
-            <input type="text" name="title" id="title" placeholder="Titulo" required />
-            <input type="text" name="file" id="file" class="file" placeholder="Image" required />
-            <input type="number" name="price" id="price" step="10" placeholder="Precio" required />
-            <input type="number" name="stock" id="stock" step="1" placeholder="Stock" required />
-            <input type="text" name="description" id="description" placeholder="Descripción" required />
+            {{!-- <div class="contenedor__file">
+
+            </div> --}}
+            <div class="contenedor__texto">
+                <input type="text" name="code" id="code" placeholder="Code" required />
+                <input type="text" name="category" id="category" placeholder="Category" required />
+                <input type="text" name="title" id="title" placeholder="Title" required />
+                <input type="text" name="file" id="file" class="file" placeholder="Image" required />
+                <input type="number" name="price" id="price" step="10" placeholder="Price" required />
+                <input type="number" name="stock" id="stock" step="1" placeholder="Stock" required />
+                <input type="text" name="description" id="description" placeholder="Description" required />
+            </div>
         </div>
         <div class="contenedor__button">
             <input type="reset" value="Limpiar" class="button limpiar" />
@@ -18,18 +23,17 @@
     <table class="contenedor__table">
         <thead class="table__categories">
             <tr class="categories__list">
-                <th class="id">Id:</th>
-                <th class="code">Codigo:</th>
-                <th class="category">Categoria:</th>
-                <th class="title">Titulo:</th>
-                <th class="thumbnail">Imagen:</th>
-                <th class="price">Precio:</th>
+                <th class="code">Code:</th>
+                <th class="category">Category:</th>
+                <th class="title">Title:</th>
+                <th class="thumbnail">Thumbnail:</th>
+                <th class="price">Price:</th>
                 <th class="stock">Stock:</th>
-                <th class="available">Disponible:</th>
-                <th class="delete">Eliminar:</th>
+                <th class="available">Available:</th>
+                <th class="edit" id="edit">Edit:</th>
+                <th class="delete" id="delete">Delete:</th>
             </tr>
         </thead>
-
         <tbody class="table__categories" id="tbody">
             {{!-- Aqui van todos los productos --}}
         </tbody>

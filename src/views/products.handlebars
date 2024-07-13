@@ -1,19 +1,23 @@
-<section class="products_table">
-    <h1 class="titulo">Productos</h1>
-    <div class="table_categories">
+<section class="product-listing">
+    <h1 class="product-title">Productos</h1>
+    <div class="product-grid">
         {{#each products}}
         {{#if this.available}}
-        <article class="categories_item">
-            <div class="item_foto">
-                <div><a href={{this.thumbnail.[0]}} target="_blank"><img class="thumbnail" src={{this.thumbnail.[0]}}
-                            alt={{this.thumbnail.[0]}}></a></div>
+        <article class="product-item">
+            <div class="product-image">
+                <a href={{this.thumbnail.[0]}} target="_blank">
+                    <img class="product-thumbnail" src={{this.thumbnail.[0]}} alt={{this.title}}>
+                </a>
             </div>
-            <div class="item_texto">
-                <div class="title">Title: {{this.title}}</div>
-                <div class="price">Descripcion: {{this.description}}</div>
-                <div class="stock">Precio: {{this.price}}</div>
+            <div class="product-info">
+                <div class="product-id">Id: {{this._id}}</div>
+                <div class="product-code">Code: {{this.code}}</div>
+                <div class="product-category">Category: {{this.category}}</div>
+                <div class="product-title">Title: {{this.title}}</div>
+                <div class="product-price">Price: ${{this.price}}</div>
+                <div class="product-stock">Stock: {{this.stock}}</div>
                 <div>
-                    <button id={{this.id}}>Agregar</button>
+                    <button id={{this._id}} class="add-button">Agregar</button>
                 </div>
             </div>
         </article>

@@ -1,28 +1,28 @@
+/* Servidor */
 import { Server } from "socket.io";
-import productController from "../controllers/productController.js";
+import ProductManager from "../controllers/ProductManager.js";
 
-const productCtrl = new productController();
+const PRODUCT = new ProductManager();
 
-const config = (serverHttp) => {
-    const serverIo = new Server(serverHttp);
+const CONFIG = (serverHTTP) => {
+    const serverIo = new Server(serverHTTP);
     serverIo.on("connection", async (socket) => {
         const id = socket.client.id;
         console.log("Conexion establecida", id);
 
         try {
-            const products = await productCtrl.getProducts(); // Usar productCtrl en lugar de product
+            const products = await PRODUCT.getProducts();
             socket.emit("products", products);
         } catch (error) {
             console.error("Error al obtener productos:", error);
             socket.emit("productsError", { message: "Error al obtener productos" });
         }
 
-        socket.on("add-product", async (productData) => {
-            console.log(productData);
+        socket.on("add-product", async (product) => {
+            console.log(product);
             try {
-                await productCtrl.addProduct(productData); // Usar productCtrl en lugar de product
-                const updatedProducts = await productCtrl.getProducts(); // Usar productCtrl en lugar de product
-                socket.emit("products", updatedProducts);
+                await PRODUCT.addProduct({ ...product });
+                socket.emit("products", await PRODUCT.getProducts());
             } catch (error) {
                 console.error("Error al agregar producto:", error);
                 socket.emit("productsError", { message: "Error al agregar producto" });
@@ -32,8 +32,8 @@ const config = (serverHttp) => {
         socket.on("delete-product", async (id) => {
             console.log(id);
             try {
-                await productCtrl.deleteProductById(Number(id)); // Usar productCtrl en lugar de product
-                const updatedProducts = await productCtrl.getProducts(); // Usar productCtrl en lugar de product
+                await PRODUCT.deleteProductById(id);
+                const updatedProducts = await PRODUCT.getProducts();
                 socket.emit("products", updatedProducts);
             } catch (error) {
                 console.error("Error al eliminar producto:", error);
@@ -44,8 +44,8 @@ const config = (serverHttp) => {
         socket.on("toggle-availability", async (id) => {
             console.log(id);
             try {
-                await productCtrl.toggleAvailability(Number(id)); // Usar productCtrl en lugar de product
-                const updatedProducts = await productCtrl.getProducts(); // Usar productCtrl en lugar de product
+                await PRODUCT.toggleAvailability(id);
+                const updatedProducts = await PRODUCT.getProducts();
                 socket.emit("products", updatedProducts);
             } catch (error) {
                 console.error("Error al cambiar disponibilidad:", error);
@@ -54,9 +54,9 @@ const config = (serverHttp) => {
         });
 
         socket.on("disconnect", () => {
-            console.log("Se desconectó un cliente");
+            console.log("Se desconecto un Cliente");
         });
     });
 };
 
-export default { config };
+export default { CONFIG };

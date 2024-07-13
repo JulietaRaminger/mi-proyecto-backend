@@ -1,38 +1,28 @@
+
 import { Router } from "express";
-import productController from "../controllers/productController.js";
+import ProductManager from "../controllers/ProductManager.js";
 
-import {
-    ERROR_INVALID_ID,
-    ERROR_NOT_FOUND_ID,
-} from "../constants/messages.constant.js";
+const ROUTER = Router();
+const PRODUCT = new ProductManager();
 
-const errorHandler = (res, message) => {
-    if (message === ERROR_INVALID_ID) return res.status(400).json({ status: false, message: ERROR_INVALID_ID });
-    if (message === ERROR_NOT_FOUND_ID) return res.status(404).json({ status: false, message: ERROR_NOT_FOUND_ID });
-    return res.status(500).json({ status: false, message });
-};
-
-const router = Router();
-const product = new productController();
-
-router.post("/", async (req, res) => {
+ROUTER.post("/", async (req, res) => {
     try {
         const { category, title, description, price, thumbnail, code, stock } = req.body;
-        const product = await product.addProduct({ category, title, description, price, thumbnail, code, stock });
+        const product = await PRODUCT.addProduct({ category, title, description, price, thumbnail, code, stock });
         res.status(201).json({ status: true, payload: product });
     } catch (error) {
-        console.error(error.message);
-        errorHandler(res, error.message);
+        console.log(error.message);
+        res.status(500).json({ status: false, message: "Hubo un error en el servidor" });
     }
 });
 
-router.get("/", async (req, res) => {
+ROUTER.get("/", async (req, res) => {
     try {
         const { limit, page, sort, filter } = req.query;
         const limitNumber = limit ? Number(limit) : 10;
         const pageNumber = page ? Number(page) : 1;
         const skip = (pageNumber - 1) * limitNumber;
-        const totalProducts = await product.countProducts();
+        const totalProducts = await PRODUCT.countProducts();
         const totalPages = Math.ceil(totalProducts / limitNumber);
 
         const sortOptions = {};
@@ -50,7 +40,7 @@ router.get("/", async (req, res) => {
             });
         }
 
-        const products = await product.getProducts(limitNumber, skip, sortOptions, filters);
+        const products = await PRODUCT.getProducts(limitNumber, skip, sortOptions, filters);
 
         const result = {
             status: true,
@@ -65,55 +55,55 @@ router.get("/", async (req, res) => {
             nextLink: pageNumber < totalPages ? `/api/products?limit=${limitNumber}&page=${pageNumber + 1}&sort=${sort}&filter=${filter}` : null,
         };
 
-        return res.status(200).json({ result: result });
+        return res.status(200).json({ result });
     } catch (error) {
-        console.error(error.message);
-        errorHandler(res, error.message);
+        console.log(error.message);
+        res.status(500).json({ status: false, message: "Hubo un error en el servidor" });
     }
 });
 
-router.get("/:id", async (req, res) => {
+ROUTER.get("/:id", async (req, res) => {
     try {
         const ID = (req.params.id);
-        const product = await product.getProductById(ID);
+        const product = await PRODUCT.getProductById(ID);
         res.status(200).json({ status: true, payload: product });
     } catch (error) {
-        console.error(error.message);
-        errorHandler(res, error.message);
+        console.log(error.message);
+        res.status(500).json({ status: false, message: "Hubo un error en el servidor" });
     }
 });
 
-router.delete("/:id", async (req, res) => {
+ROUTER.delete("/:id", async (req, res) => {
     try {
         const ID = (req.params.id);
-        const product = await product.deleteProductById(ID);
+        const product = await PRODUCT.deleteProductById(ID);
         res.status(200).json({ status: true, payload: product });
-    }catch (error) {
-        console.error(error.message);
-        errorHandler(res, error.message);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ status: false, message: "Hubo un error en el servidor" });
     }
 });
 
-router.put("/:id", async (req, res) => {
+ROUTER.put("/:id", async (req, res) => {
     try {
         const ID = req.params.id;
         const { category, title, description, price, thumbnail, code, stock, available } = req.body;
         const updateData = { category, title, description, price, thumbnail, code, stock, available };
-        const productUpdated = await product.updateProduct( ID, updateData );
+        const productUpdated = await PRODUCT.updateProduct( ID, updateData );
         if (!productUpdated) {
             return res.status(404).json({ status: false, message: "Producto no encontrado" });
         }
         res.status(200).json({ status: true, payload: productUpdated });
-    }catch (error) {
-        console.error(error.message);
-        errorHandler(res, error.message);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ status: false, message: "Hubo un error en el servidor" });
     }
 });
 
-router.put("/available/:id", async (req, res) => {
+ROUTER.put("/available/:id", async (req, res) => {
     try {
         const ID = req.params.id;
-        const RESULT = await product.toggleAvailability(ID);
+        const RESULT = await PRODUCT.toggleAvailability(ID);
 
         if (RESULT === "Producto no encontrado") {
             return res.status(404).json({ status: false, message: RESULT });
@@ -122,9 +112,8 @@ router.put("/available/:id", async (req, res) => {
         return res.status(200).json({ status: true, payload: RESULT });
     } catch (error) {
         console.error(error.message);
-        errorHandler(res, error.message);
+        return res.status(500).json({ status: false, message: "Hubo un error en el servidor" });
     }
-
 });
 
-export default router;
+export default ROUTER;

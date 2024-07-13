@@ -1,6 +1,6 @@
 import path from "path";
 
-const pathConfig = {
+const PATH = {
     root: path.dirname(""),
     src: path.join(path.dirname(""), "src"),
     public: path.join(path.dirname(""), "src", "public"),
@@ -10,4 +10,4 @@ const pathConfig = {
     views: path.join(path.dirname(""), "src", "views"),
 };
 
-export default pathConfig;
+export default PATH;

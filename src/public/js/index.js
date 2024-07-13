@@ -1,19 +1,19 @@
-/* cliente */
-console.log("hola desde el server");
+/* Cliente */
+console.log("Hola desde el server");
 
-const socket = io();
-const form = document.getElementById("form");
+const SOCKET = io();
+const FORM = document.getElementById("form");
 
-// Esto es para escuchar un mensaje
-socket.on("connect", () => {
-    console.log("conectado al server");
+// esto es para escuchar un mensaje
+SOCKET.on("connect", () => {
+    console.log("Conectado al Server");
 });
 
-// Esto es para escuchar la lista de productos actualizada
-socket.on("products", (products) => {
-    const tbody = document.getElementById("tbody");
-    tbody.innerHTML = "";
-    let rowsHTML = ""; // variable para acumular todas las filas
+// esto es para escuchar un mensaje
+SOCKET.on("products", (products) => {
+    const TBODY = document.getElementById("tbody");
+    TBODY.innerHTML = "";
+    let rowsHTML = ""; // Variable para acumular todas las filas
     if (products && Array.isArray(products)) {
         products.forEach((product) => {
             const availabilityIcon = product.available
@@ -45,12 +45,10 @@ socket.on("products", (products) => {
     } else {
         console.log("Received products is null or not an array", products);
     }
-    tbody.innerHTML = rowsHTML; // Establecer el innerHTML de tbody una sola vez
-    // Agregar event listener para los botones de eliminar
+    TBODY.innerHTML = rowsHTML; // Establecer el innerHTML de TBODY una sola vez
     document.querySelectorAll(".delete").forEach((button) => {
         button.addEventListener("click", function() {
             const productId = this.getAttribute("id");
-
             // Mostrar SweetAlert para confirmar la eliminación
             Swal.fire({
                 title: "¿Deseas eliminar el producto?",
@@ -62,7 +60,7 @@ socket.on("products", (products) => {
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Emitir evento al servidor para eliminar el producto
-                    socket.emit("delete-product", productId);
+                    SOCKET.emit("delete-product", productId);
 
                     // Mostrar mensaje de éxito al eliminar el producto
                     Swal.fire({
@@ -73,42 +71,41 @@ socket.on("products", (products) => {
                     });
                 }
             });
+
         });
     });
-
-    // Agregar event listener para los botones de disponibilidad
     document.querySelectorAll(".available").forEach((button) => {
         button.addEventListener("click", function() {
             const productId = this.getAttribute("id");
-            socket.emit("toggle-availability", productId);
+            SOCKET.emit("toggle-availability", productId);
         });
     });
 });
 
-form.addEventListener("submit", function(event) {
+FORM.addEventListener("submit", function(event) {
     event.preventDefault();
     // obtener valores del formulario
-    const file = document.getElementById("file").value;
-    const code = document.getElementById("code").value;
-    const category = document.getElementById("category").value;
-    const title = document.getElementById("title").value;
-    const price = document.getElementById("price").value;
-    const stock = document.getElementById("stock").value;
-    const description = document.getElementById("description").value;
-    // enviar el nuevo producto al servidor a través de socket
+    const FILE = document.getElementById("file").value;
+    const CODE = document.getElementById("code").value;
+    const CATEGORY = document.getElementById("category").value;
+    const TITLE = document.getElementById("title").value;
+    const PRICE = document.getElementById("price").value;
+    const STOCK = document.getElementById("stock").value;
+    const DESCRIPTION = document.getElementById("description").value;
+    // enviar el nuevo producto al servidor a traves de socket
     const product = {
-        code: code,
-        category: category,
-        title: title,
-        description: description,
-        price: Number(price),
-        stock: Number(stock),
-        thumbnail: [file],
+        code: CODE,
+        category: CATEGORY,
+        title: TITLE,
+        description: DESCRIPTION,
+        price: Number(PRICE),
+        stock: Number(STOCK),
+        thumbnail: [FILE],
         available: true,
     };
-    console.log(file);
-    socket.emit("add-product", product);
-    form.reset();
+    console.log(FILE);
+    SOCKET.emit("add-product", product);
+    FORM.reset();
     // Mostrar SweetAlert después de enviar el producto
     Swal.fire({
         position: "top-end",
@@ -119,7 +116,7 @@ form.addEventListener("submit", function(event) {
     });
 });
 
-// Esto aparece al desconectar el servidor (control+c)
-socket.on("disconnect", () => {
-    console.log("se desconectó el server");
+// esto aparece al desconectar el servidor (control+C).
+SOCKET.on("disconnect", () => {
+    console.log("Se desconecto el server");
 });

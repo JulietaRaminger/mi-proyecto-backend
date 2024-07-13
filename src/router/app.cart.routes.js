@@ -1,12 +1,12 @@
 import { Router } from "express";
-import cartController from "../controllers/cartController.js";
+import CartManager from "../controllers/CartManager.js";
 
-const router = Router();
-const cart = new cartController();
+const ROUTER = Router();
+const CART = new CartManager();
 
-router.get("/", async (req, res) => {
+ROUTER.get("/", async (req, res) => {
     try {
-        const allCarts = await cart.getCarts();
+        const allCarts = await CART.getCarts();
         return res.status(200).render("carts", {
             title: "Carts",
             carts: allCarts,
@@ -17,4 +17,4 @@ router.get("/", async (req, res) => {
     }
 });
 
-export default router;
+export default ROUTER;

@@ -1,7 +1,7 @@
 import ProductModel from "../models/product.model.js";
 import mongoDB from "../config/mongoose.config.js";
 
-export default class productController {
+export default class ProductManager {
     #itemModel;
 
     // Constructor
@@ -10,12 +10,13 @@ export default class productController {
     }
 
     // Funciones privadas
-    #readItems = async (limit, skip, sort) => {
+    #readItems = async (limit, skip, sort, filter) => {
         try {
-            const items = await this.#itemModel.find().limit(limit).skip(skip).sort(sort).lean();
+            const items = await this.#itemModel.find(filter).limit(limit).skip(skip).sort(sort).lean();
             return items;
         } catch (error) {
             console.log(error.message);
+            return "Hubo un error al leer el archivo";
         }
     };
 
@@ -24,6 +25,7 @@ export default class productController {
             return await datos.save();
         } catch (error) {
             console.log(error.message);
+            return "Hubo un error al escribir el archivo";
         }
     };
 
@@ -33,6 +35,7 @@ export default class productController {
             return itemId;
         } catch (error) {
             console.log(error.message);
+            return "Hubo un error al identificar el producto";
         }
     };
 
@@ -84,6 +87,7 @@ export default class productController {
             return product;
         } catch (error) {
             console.log(error.message);
+            return "Hubo un error al obtener el producto";
         }
     };
 
@@ -96,6 +100,7 @@ export default class productController {
             return "Producto Eliminado";
         } catch (error) {
             console.log(error, message);
+            return "Hubo un error al eliminar el producto";
         }
     };
 
@@ -112,6 +117,7 @@ export default class productController {
             }
         } catch (error) {
             console.log(error.message);
+            return "Hubo un error al actualizar el producto";
         }
     };
 
@@ -130,14 +136,16 @@ export default class productController {
             }
         } catch (error) {
             console.log(error.message);
+            return "Hubo un error al cambiar la disponibilidad del producto";
         }
     };
 
-    getProducts = async (limit, skip, sort) => {
+    getProducts = async (limit, skip, sort, filter) => {
         try {
-            return await this.#readItems(limit, skip, sort);
+            return await this.#readItems(limit, skip, sort, filter);
         } catch (error) {
             console.log(error.message);
+            return "Hubo un error al obtener los productos";
         }
     };
 }

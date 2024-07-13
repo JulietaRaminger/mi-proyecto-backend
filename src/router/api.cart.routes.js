@@ -1,68 +1,60 @@
 import { Router } from "express";
-import cartController from "../controllers/cartController.js";
+import CartManager from "../controllers/CartManager.js";
 
-import {
-    ERROR_INVALID_ID,
-    ERROR_NOT_FOUND_ID,
-} from "../constants/messages.constant.js";
+const ROUTER = Router();
+const CART = new CartManager();
 
-const errorHandler = (res, message) => {
-    if (message === ERROR_INVALID_ID) return res.status(400).json({ status: false, message: ERROR_INVALID_ID });
-    if (message === ERROR_NOT_FOUND_ID) return res.status(404).json({ status: false, message: ERROR_NOT_FOUND_ID });
-    return res.status(500).json({ status: false, message });
-};
-
-const router = Router();
-const cart = new cartController();
-
-// cart manager
-router.post("/", async (req, res) => {
+ROUTER.post("/", async (req, res) => {
     try {
-        res.status(201).send(await cart.addCart());
-    } catch (error) {
-        errorHandler(res, error.message);
-    }
-});
-
-router.post("/:cid/products/:pid", async (req, res) => {
-    try {
-        const cartId = req.params.cid;
-        const productId = req.params.pid;
-        res.status(200).send(await cart.addProductToCart(cartId, productId));
-    } catch (error) {
-        errorHandler(res, error.message);
-    }
-});
-
-router.get("/", async (req, res) => {
-    try {
-        res.status(200).send(await cart.getCarts());
-    }catch (error) {
-        errorHandler(res, error.message);
-    }
-});
-
-router.get("/:id", async (req, res) => {
-    try {
-        const ID = req.params.id;
-        res.status(200).send(await cart.getCartById(ID));
-    }catch (error) {
-        errorHandler(res, error.message);
-    }
-});
-
-router.delete("/:cid/products/:pid", async (req, res) => {
-    try {
-        const cartId = req.params.cid;
-        const productId = req.params.pid;
-        res.status(200).send(await cart.deleteProductFromCart(cartId, productId));
+        res.status(201).send(await CART.addCart());
     } catch (error) {
         console.log(error.message);
-        errorHandler(res, error.message);
+        res.status(500).json({ status: false, message: "Hubo un error en el servidor" });
     }
 });
 
-router.put("/:cid/products/:pid", async (req, res) => {
+ROUTER.post("/:cid/products/:pid", async (req, res) => {
+    try {
+        const cartId = req.params.cid;
+        const productId = req.params.pid;
+        res.status(200).send(await CART.addProductToCart(cartId, productId));
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ status: false, message: "Hubo un error en el servidor" });
+    }
+});
+
+ROUTER.get("/", async (req, res) => {
+    try {
+        res.status(200).send(await CART.getCarts());
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ status: false, message: "Hubo un error en el servidor" });
+    }
+});
+
+ROUTER.get("/:id", async (req, res) => {
+    try {
+        const ID = req.params.id;
+        res.status(200).send(await CART.getCartById(ID));
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ status: false, message: "Hubo un error en el servidor" });
+    }
+});
+
+ROUTER.delete("/:cid/products/:pid", async (req, res) => {
+    try {
+        const cartId = req.params.cid;
+        const productId = req.params.pid;
+        res.status(200).send(await CART.deleteProductFromCart(cartId, productId));
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ status: false, message: "Hubo un error en el servidor" });
+    }
+});
+
+ROUTER.put("/:cid/products/:pid", async (req, res) => {
     try {
         const cartId = req.params.cid;
         const productId = req.params.pid;
@@ -73,7 +65,7 @@ router.put("/:cid/products/:pid", async (req, res) => {
             return res.status(400).json({ status: false, message: "Cantidad inválida" });
         }
 
-        const updateResult = await cart.updateCartQuantity(cartId, productId, quantity);
+        const updateResult = await CART.updateCartQuantity(cartId, productId, quantity);
         console.log("Resultado de la actualización:", updateResult);
 
         if (updateResult === "Carrito no encontrado" || updateResult === "Producto no encontrado en el carrito" || updateResult === "ID no válido") {
@@ -85,14 +77,14 @@ router.put("/:cid/products/:pid", async (req, res) => {
         }
     } catch (error) {
         console.log("Error en el servidor:", error.message);
-        errorHandler(res, error.message);
+        res.status(500).json({ status: false, message: "Hubo un error en el servidor" });
     }
 });
 
-router.delete("/:cid", async (req, res) => {
+ROUTER.delete("/:cid", async (req, res) => {
     try {
         const cartId = req.params.cid;
-        const deleteResult = await cart.cleanCart(cartId);
+        const deleteResult = await CART.cleanCart(cartId);
         console.log("Resultado de la eliminación:", deleteResult);
 
         if (deleteResult === "Carrito no encontrado" || deleteResult === "ID no válido") {
@@ -104,24 +96,24 @@ router.delete("/:cid", async (req, res) => {
         }
     } catch (error) {
         console.log("Error en el servidor:", error.message);
-        errorHandler(res, error.message);
+        res.status(500).json({ status: false, message: "Hubo un error en el servidor" });
     }
 });
 
-router.put("/:id", async (req, res) => {
+ROUTER.put("/:id", async (req, res) => {
     try {
         const ID = req.params.id;
         const { products } = req.body; // Ahora se espera que el cuerpo de la solicitud contenga un arreglo de productos
         const updateData = { products };
-        const cartUpdated = await cart.updateCart(ID, updateData);
+        const cartUpdated = await CART.updateCart(ID, updateData);
         if (!cartUpdated) {
             return res.status(404).json({ status: false, message: "Producto no encontrado" });
         }
         res.status(200).json({ status: true, payload: cartUpdated });
     } catch (error) {
         console.log(error.message);
-        errorHandler(res, error.message);
+        res.status(500).json({ status: false, message: "Hubo un error en el servidor" });
     }
 });
 
-export default router;
+export default ROUTER;

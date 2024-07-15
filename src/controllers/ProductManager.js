@@ -99,7 +99,7 @@ export default class ProductManager {
             await this.#itemModel.findByIdAndDelete(id);
             return "Producto Eliminado";
         } catch (error) {
-            console.log(error, message);
+            console.log(error.message);
             return "Hubo un error al eliminar el producto";
         }
     };

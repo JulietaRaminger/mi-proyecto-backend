@@ -5,17 +5,13 @@
         {{#if this.available}}
         <article class="product-item">
             <div class="product-image">
-                <a href={{this.thumbnail.[0]}} target="_blank">
-                    <img class="product-thumbnail" src={{this.thumbnail.[0]}} alt={{this.title}}>
-                </a>
+                <div><a href={{this.thumbnail.[0]}} target="_blank"><img class="thumbnail" src={{this.thumbnail.[0]}}
+                            alt={{this.thumbnail.[0]}}></a></div>
             </div>
             <div class="product-info">
-                <div class="product-id">Id: {{this._id}}</div>
-                <div class="product-code">Code: {{this.code}}</div>
-                <div class="product-category">Category: {{this.category}}</div>
-                <div class="product-title">Title: {{this.title}}</div>
-                <div class="product-price">Price: ${{this.price}}</div>
-                <div class="product-stock">Stock: {{this.stock}}</div>
+                <div class="product-title">{{this.title}}</div>
+                <div class="product-price">${{this.price}}</div>
+                <div class="product-price">{{this.description}}</div>
                 <div>
                     <button id={{this._id}} class="add-button">Agregar</button>
                 </div>

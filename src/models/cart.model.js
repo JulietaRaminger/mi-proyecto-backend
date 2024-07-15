@@ -1,12 +1,13 @@
 import { Schema, model } from "mongoose";
 
-const productSchema = new Schema({
-    _id: { type: Schema.Types.ObjectId, ref: "products", required: true },
+const cartItemSchema = new Schema({
+    id: { type: Schema.Types.ObjectId, ref: "products", required: true },
     quantity: { type: Number, required: true },
+    _id: false,
 });
 
 const cartSchema = new Schema({
-    products: [productSchema],
+    products: [cartItemSchema],
 });
 
 cartSchema.pre(/^find/, function(next) {

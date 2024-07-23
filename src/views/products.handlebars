@@ -1,23 +1,48 @@
 <section class="product-listing">
-    <h1 class="product-title">Productos</h1>
+    <h1 class="product-title">Products</h1>
     <div class="product-grid">
-        {{#each products}}
+        {{#each products.productsFound.docs}}
         {{#if this.available}}
         <article class="product-item">
             <div class="product-image">
-                <div><a href={{this.thumbnail.[0]}} target="_blank"><img class="thumbnail" src={{this.thumbnail.[0]}}
-                            alt={{this.thumbnail.[0]}}></a></div>
+                <div><a href="{{this.thumbnail.[0]}}" target="_blank"><img class="product-thumbnail"
+                            src="{{this.thumbnail.[0]}}" alt="{{this.thumbnail.[0]}}"></a></div>
             </div>
             <div class="product-info">
-                <div class="product-title">{{this.title}}</div>
-                <div class="product-price">${{this.price}}</div>
-                <div class="product-price">{{this.description}}</div>
-                <div>
-                    <button id={{this._id}} class="add-button">Agregar</button>
-                </div>
+                <div class="product-id">Id: {{this._id}}</div>
+                <div class="product-code">Code: {{this.code}}</div>
+                <div class="product-category">Category: {{this.category}}</div>
+                <div class="product-title">Title: {{this.title}}</div>
+                <div class="product-price">Price: {{this.price}}</div>
+                <div class="product-stock">Stock: {{this.stock}}</div>
+                <a href="http://localhost:8080/products/{{this._id}}" target="_blank">
+                    <button class="add-button">Detalle</button>
+                </a>
             </div>
         </article>
         {{/if}}
         {{/each}}
+    </div>
+    <div>
+        {{#if products.productsFound.prevPage}}
+        <a
+            href="/products?page={{products.productsFound.prevPage}}{{#if products.productsFound.sort}}&sort={{products.productsFound.sort}}{{/if}}{{#if products.productsFound.limit}}&limit={{products.productsFound.limit}}{{/if}}">Anterior</a>
+        {{/if}}
+        {{#if products.productsFound.nextPage}}
+        <a
+            href="/products?page={{products.productsFound.nextPage}}{{#if products.productsFound.sort}}&sort={{products.productsFound.sort}}{{/if}}{{#if products.productsFound.limit}}&limit={{products.productsFound.limit}}{{/if}}">Siguiente</a>
+        {{/if}}
+    </div>
+    <div>
+        <a
+            href="/products?page={{products.productsFound.page}}{{#if limit}}&limit={{limit}}{{/if}}&sort=asc">Ascendente</a>
+        <a
+            href="/products?page={{products.productsFound.page}}{{#if limit}}&limit={{limit}}{{/if}}&sort=desc">Descendente</a>
+    </div>
+    <div class="listadoInfoProducts">
+        <a href="/products?page={{products.productsFound.page}}{{#if limit}}&limit={{limit}}{{/if}}">Reset</a>
+        <p><span>Página {{products.productsFound.page}} de {{products.productsFound.totalPages}}</span>,
+            <span>{{products.productsFound.totalDocs}} Documentos</span> y <span>{{products.skip}} Omitidos</span>
+        </p>
     </div>
 </section>

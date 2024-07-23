@@ -9,52 +9,13 @@ export default class ProductManager {
         this.#itemModel = ProductModel;
     }
 
-    // Funciones privadas
-    #readItems = async (limit, skip, sort, filter) => {
-        try {
-            const items = await this.#itemModel.find(filter).limit(limit).skip(skip).sort(sort).lean();
-            return items;
-        } catch (error) {
-            console.log(error.message);
-            return "Hubo un error al leer el archivo";
-        }
-    };
-
-    #escribirArchivo = async (datos) => {
-        try {
-            return await datos.save();
-        } catch (error) {
-            console.log(error.message);
-            return "Hubo un error al escribir el archivo";
-        }
-    };
-
-    #identifyId = async (id) => {
-        try {
-            const itemId = await this.#itemModel.findById(id);
-            return itemId;
-        } catch (error) {
-            console.log(error.message);
-            return "Hubo un error al identificar el producto";
-        }
-    };
-
     // Funciones públicas
-    countProducts = async () => {
-        try {
-            return await ProductModel.countDocuments();
-        } catch (error) {
-            console.log(error.message);
-            return "Hubo un error al contar los productos";
-        }
-    };
-
     addProduct = async ({ category, title, description, price, thumbnail = [], code, stock, available }) => {
 
         if (!category || !title || !description || !price || !code || !stock) {
             console.log("Todos los campos son obligatorios");
         }
-        const products = await this.#readItems();
+        const products = await this.#itemModel.find().lean();
         try {
             const product = new this.#itemModel({
                 category,
@@ -70,7 +31,7 @@ export default class ProductManager {
             if (sameCode){
                 return "El codigo ya existe";
             }
-            await this.#escribirArchivo(product);
+            await product.save();
             return "Producto agregado correctamente";
         } catch (error) {
             console.log(error.message);
@@ -83,7 +44,10 @@ export default class ProductManager {
             return null;
         }
         try {
-            const product = await this.#identifyId(id);
+            const product = await this.#itemModel.findById(id);
+            if (!product) {
+                return null;
+            }
             return product;
         } catch (error) {
             console.log(error.message);
@@ -126,10 +90,10 @@ export default class ProductManager {
             return null;
         }
         try {
-            const product = await this.#identifyId(id);
+            const product = await this.#itemModel.findById(id);
             if (product) {
                 product.available = !product.available;
-                await this.#escribirArchivo(product);
+                await product.save();
                 return product;
             } else {
                 return "Producto no encontrado";
@@ -140,9 +104,47 @@ export default class ProductManager {
         }
     };
 
-    getProducts = async (limit, skip, sort, filter) => {
+    getProducts = async (paramFilters) => {
         try {
-            return await this.#readItems(limit, skip, sort, filter);
+            const $and = [];
+
+            if (paramFilters?.category) $and.push({ category: paramFilters.category });
+            if (paramFilters?.title) $and.push({ title: paramFilters.title });
+            if (paramFilters?.code) $and.push({ code: paramFilters.code });
+            if (paramFilters?.available) $and.push({ available: paramFilters.available });
+
+            const filters = $and.length > 0 ? { $and } : {};
+
+            let sort = {};
+            if (paramFilters?.sort && (paramFilters.sort === "asc" || paramFilters.sort === "desc")) {
+                sort = {
+                    price: paramFilters.sort === "desc" ? -1 : 1,
+                };
+            }
+
+            const defaultLimit = 10;
+            const defaultPage = 1;
+
+            const skip = (paramFilters?.page ? (parseInt(paramFilters.page) - 1) : (defaultPage - 1)) * (paramFilters?.limit ? parseInt(paramFilters.limit) : defaultLimit);
+
+            const paginationOptions = {
+                limit: paramFilters?.limit ? parseInt(paramFilters.limit) : defaultLimit,
+                page: paramFilters?.page ? parseInt(paramFilters.page) : defaultPage,
+                sort: sort,
+                skip: skip,
+                lean: true,
+            };
+
+            const productsFound = await this.#itemModel.paginate(filters, paginationOptions);
+
+            // Remove the 'id' field from each product in the results
+            productsFound.docs = productsFound.docs.map((product) => {
+                const { id, ...productWithoutId } = product;
+                console.log(id);
+                return productWithoutId;
+            });
+
+            return { productsFound, skip };
         } catch (error) {
             console.log(error.message);
             return "Hubo un error al obtener los productos";

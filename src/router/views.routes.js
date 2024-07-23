@@ -5,7 +5,7 @@ const ROUTER = Router();
 
 ROUTER.get("/explain", async (req, res) => {
     try {
-        const result = await ProductModel.find({ $and: [{ category: "decoracion" }, { title: "2" }] }).explain();
+        const result = await ProductModel.find({ $and: [{ category: "BATERIA" }, { title: "55457" }] }).explain();
         console.log(result.executionStats);
         res.status(200).json({ status: true, payload: result.executionStats });
     } catch (error) {
